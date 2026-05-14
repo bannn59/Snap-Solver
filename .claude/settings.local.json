@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(trellis-before-dev)",
+      "Skill(update-config)",
+      "PowerShell(python ./.trellis/scripts/get_context.py --mode packages)",
+      "PowerShell(python -m json.tool \"C:\\\\Users\\\\A\\\\.claude\\\\settings.json\" > $null)",
+      "WebSearch",
+      "WebFetch(domain:ai.google.dev)",
+      "WebFetch(domain:www.volcengine.com)",
+      "WebFetch(domain:www.alibabacloud.com)",
+      "WebFetch(domain:api-docs.deepseek.com)",
+      "WebFetch(domain:docs.claude.com)"
+    ]
+  }
+}

@@ -25,16 +25,12 @@
 </p>
 
 <div align="center">
-  <a href="https://github.com/Zippland/Snap-Solver/releases">
-    <img src="https://img.shields.io/badge/⚡%20快速开始-下载最新版本-0366D6?style=for-the-badge&logo=github&logoColor=white" alt="获取Release" width="240" />
+  <a href="#-快速开始">
+    <img src="https://img.shields.io/badge/⚡%20快速开始-查看使用方式-0366D6?style=for-the-badge&logo=github&logoColor=white" alt="查看快速开始" width="240" />
   </a>
   &nbsp;&nbsp;&nbsp;&nbsp;
   <a href="docs/beginner-tutorial.md">
     <img src="https://img.shields.io/badge/📘%20零基础入门-阅读新手教程-FF9800?style=for-the-badge&logo=bookstack&logoColor=white" alt="阅读新手教程" width="240" />
-  </a>
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="mailto:zylanjian@outlook.com">
-    <img src="https://img.shields.io/badge/📞%20代部署支持-联系我们-28a745?style=for-the-badge&logo=mail.ru&logoColor=white" alt="联系我们" width="220" />
   </a>
 </div>
 <!-- <p align="center">
@@ -215,9 +211,8 @@ python app.py
 
 ## 🤝 获取帮助
 
-- **代部署服务**：如果您不擅长编程，需要代部署服务，请联系 [zylanjian@outlook.com](mailto:zylanjian@outlook.com)
-- **问题报告**：在GitHub仓库提交Issue
-- **功能建议**：欢迎通过Issue或邮件提供改进建议
+- **问题报告**：在当前仓库提交 Issue
+- **功能建议**：欢迎通过 Issue 提供改进建议
 
 ## 📜 开源协议
 
