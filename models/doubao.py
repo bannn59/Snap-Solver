@@ -25,7 +25,7 @@ class DoubaoModel(BaseModel):
         """
         super().__init__(api_key, temperature, system_prompt, language)
         self.model_name = model_name or self.get_model_identifier()
-        self.base_url = api_base_url or "https://ark.cn-beijing.volces.com/api/v3"
+        self.base_url = api_base_url or "https://operator.las.cn-beijing.volces.com/api/v1"
         self.max_tokens = 4096  # 默认最大输出token数
         self.reasoning_config = None  # 推理配置，类似于AnthropicModel
     
@@ -39,17 +39,22 @@ class DoubaoModel(BaseModel):
 
     def get_model_identifier(self) -> str:
         """返回默认的模型标识符"""
-        return "doubao-seed-1-6-250615"  # Doubao-Seed-1.6
+        return "doubao-seed-2-0-pro-260215"  # Doubao-Seed-2.0 Pro
     
     def get_actual_model_name(self) -> str:
         """根据配置的模型名称返回实际的API调用标识符"""
         # 豆包API的实际模型名称映射
         model_mapping = {
-            "doubao-seed-1-6-250615": "doubao-seed-1-6-250615"
+            "doubao-seed-2-0-pro-260215": "doubao-seed-2-0-pro-260215",
+            "doubao-seed-2-0-lite-260215": "doubao-seed-2-0-lite-260215",
+            "doubao-seed-2-0-mini-260215": "doubao-seed-2-0-mini-260215"
         }
-        
-        return model_mapping.get(self.model_name, "doubao-seed-1-6-250615")
-    
+
+        return model_mapping.get(self.model_name, "doubao-seed-2-0-pro-260215")
+
+    def _supports_thinking(self) -> bool:
+        return "flash" not in self.get_actual_model_name()
+
     def analyze_text(self, text: str, proxies: dict = None) -> Generator[dict, None, None]:
         """流式生成文本响应"""
         try:
@@ -94,27 +99,20 @@ class DoubaoModel(BaseModel):
                     "content": user_content
                 })
 
-                # 处理推理配置
-                thinking = {
-                    "type": "auto"  # 默认值
-                }
-                
-                if hasattr(self, 'reasoning_config') and self.reasoning_config:
-                    # 从reasoning_config中获取thinking_mode
-                    thinking_mode = self.reasoning_config.get('thinking_mode', "auto")
-                    thinking = {
-                        "type": thinking_mode
-                    }
-
                 # 构建请求数据
                 data = {
                     "model": self.get_actual_model_name(),
                     "messages": messages,
-                    "thinking": thinking,
                     "temperature": self.temperature,
                     "max_tokens": self.max_tokens,
                     "stream": True
                 }
+
+                if self._supports_thinking():
+                    thinking_mode = "auto"
+                    if hasattr(self, 'reasoning_config') and self.reasoning_config:
+                        thinking_mode = self.reasoning_config.get('thinking_mode', "auto")
+                    data["thinking"] = {"type": thinking_mode}
                 
                 # 发送流式请求
                 response = requests.post(
@@ -256,27 +254,20 @@ class DoubaoModel(BaseModel):
                     "content": user_content
                 })
 
-                # 处理推理配置
-                thinking = {
-                    "type": "auto"  # 默认值
-                }
-                
-                if hasattr(self, 'reasoning_config') and self.reasoning_config:
-                    # 从reasoning_config中获取thinking_mode
-                    thinking_mode = self.reasoning_config.get('thinking_mode', "auto")
-                    thinking = {
-                        "type": thinking_mode
-                    }
-                
                 # 构建请求数据
                 data = {
                     "model": self.get_actual_model_name(),
                     "messages": messages,
-                    "thinking": thinking,
                     "temperature": self.temperature,
                     "max_tokens": self.max_tokens,
                     "stream": True
                 }
+
+                if self._supports_thinking():
+                    thinking_mode = "auto"
+                    if hasattr(self, 'reasoning_config') and self.reasoning_config:
+                        thinking_mode = self.reasoning_config.get('thinking_mode', "auto")
+                    data["thinking"] = {"type": thinking_mode}
                 
                 # 发送流式请求
                 response = requests.post(

@@ -193,7 +193,7 @@ pip install -r requirements.txt
 
 - 根据你手上的 Key，将对应值填入设置页面的输入框中；
 - 常用字段：
-  - `OpenaiApiKey`：OpenAI 模型（如 GPT-4o、o3-mini）
+  - `OpenaiApiKey`：OpenAI 模型（如 GPT-5.5、GPT-5.4）
   - `AnthropicApiKey`：Claude 系列
   - `DeepseekApiKey`：DeepSeek
   - `AlibabaApiKey`：通义千问 / Qwen / QVQ
@@ -223,7 +223,7 @@ pip install -r requirements.txt
 
 API Key 相当于你在各大模型平台上的「门票」。不同平台的获取流程不同，以下列出了最常用的几个来源。申请过程中务必保护好个人隐私与账号安全，切勿向他人泄露密钥。
 
-### 10.1 OpenAI（GPT-4o / o3-mini 等）
+### 10.1 OpenAI（GPT-5.5 / GPT-5.4 等）
 1. 打开 https://platform.openai.com/ 并使用邮箱或第三方账号注册 / 登录。
 2. 首次使用需完成实名和支付方式绑定（可选择信用卡或预付费余额）。
 3. 登录后点击右上角头像 → `View API keys`。

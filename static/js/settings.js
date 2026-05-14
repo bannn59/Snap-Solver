@@ -729,7 +729,7 @@ class SettingsManager {
         // 处理深度推理设置显示
         const isAnthropicReasoning = modelInfo.isReasoning && modelInfo.provider === 'anthropic';
         
-        // 只有对Claude 3.7 Sonnet这样的Anthropic推理模型才显示深度推理设置
+        // 只有对支持推理的Anthropic模型才显示深度推理设置
         if (this.reasoningSettingGroup) {
             this.reasoningSettingGroup.style.display = isAnthropicReasoning ? 'block' : 'none';
         }
@@ -2251,36 +2251,72 @@ class SettingsManager {
             'deepseek': {
                 name: 'DeepSeek',
                 api_key_id: 'DeepseekApiKey'
+            },
+            'alibaba': {
+                name: 'Alibaba',
+                api_key_id: 'AlibabaApiKey'
+            },
+            'google': {
+                name: 'Google',
+                api_key_id: 'GoogleApiKey'
+            },
+            'doubao': {
+                name: 'Doubao',
+                api_key_id: 'DoubaoApiKey'
             }
         };
-        
+
         this.modelDefinitions = {
-            'claude-3-7-sonnet-20250219': {
-                name: 'Claude 3.7 Sonnet',
+            'claude-opus-4-7': {
+                name: 'Claude Opus 4.7',
                 provider: 'anthropic',
                 supportsMultimodal: true,
                 isReasoning: true,
                 apiKeyId: 'AnthropicApiKey',
-                version: '20250219'
+                version: 'latest'
             },
-            'gpt-4o-2024-11-20': {
-                name: 'GPT-4o',
+            'gpt-5.5': {
+                name: 'GPT-5.5',
                 provider: 'openai',
                 supportsMultimodal: true,
-                isReasoning: false,
+                isReasoning: true,
                 apiKeyId: 'OpenaiApiKey',
-                version: '2024-11-20'
+                version: 'latest'
             },
-            'deepseek-reasoner': {
-                name: 'DeepSeek Reasoner',
+            'deepseek-v4-pro': {
+                name: 'DeepSeek V4 Pro',
                 provider: 'deepseek',
                 supportsMultimodal: false,
                 isReasoning: true,
                 apiKeyId: 'DeepseekApiKey',
                 version: 'latest'
+            },
+            'qwen3-vl-plus': {
+                name: 'Qwen3-VL Plus',
+                provider: 'alibaba',
+                supportsMultimodal: true,
+                isReasoning: true,
+                apiKeyId: 'AlibabaApiKey',
+                version: 'latest'
+            },
+            'gemini-3.1-pro-preview': {
+                name: 'Gemini 3.1 Pro Preview',
+                provider: 'google',
+                supportsMultimodal: true,
+                isReasoning: true,
+                apiKeyId: 'GoogleApiKey',
+                version: 'preview'
+            },
+            'doubao-seed-2-0-pro-260215': {
+                name: 'Doubao-Seed-2.0 Pro',
+                provider: 'doubao',
+                supportsMultimodal: true,
+                isReasoning: true,
+                apiKeyId: 'DoubaoApiKey',
+                version: '260215'
             }
         };
-        
+
         console.log('使用默认模型配置');
     }
 

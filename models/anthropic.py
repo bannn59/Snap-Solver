@@ -9,7 +9,7 @@ class AnthropicModel(BaseModel):
         # 设置API基础URL，默认为Anthropic官方API
         self.api_base_url = api_base_url or "https://api.anthropic.com/v1"
         # 设置模型标识符，支持动态选择
-        self.model_identifier = model_identifier or "claude-3-7-sonnet-20250219"
+        self.model_identifier = model_identifier or "claude-opus-4-7"
         # 初始化推理配置
         self.reasoning_config = None
         # 初始化最大Token数

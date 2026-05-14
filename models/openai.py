@@ -9,7 +9,7 @@ class OpenAIModel(BaseModel):
         # 设置API基础URL，默认为OpenAI官方API
         self.api_base_url = api_base_url
         # 允许从外部配置显式指定模型标识符
-        self.model_identifier = model_identifier or "gpt-4o-2024-11-20"
+        self.model_identifier = model_identifier or "gpt-5.5"
         
     def get_default_system_prompt(self) -> str:
         return """You are an expert at analyzing questions and providing detailed solutions. When presented with an image of a question:
@@ -22,8 +22,12 @@ class OpenAIModel(BaseModel):
     def get_model_identifier(self) -> str:
         return self.model_identifier
 
+    def _uses_max_completion_tokens(self) -> bool:
+        model_id = self.get_model_identifier().lower()
+        return model_id.startswith('gpt-5') or model_id.startswith('o3')
+
     def analyze_text(self, text: str, proxies: dict = None) -> Generator[dict, None, None]:
-        """Stream GPT-4o's response for text analysis"""
+        """Stream OpenAI model response for text analysis"""
         try:
             # Initial status
             yield {"status": "started", "content": ""}
@@ -60,13 +64,18 @@ class OpenAIModel(BaseModel):
                     }
                 ]
 
-                response = client.chat.completions.create(
-                    model=self.get_model_identifier(),
-                    messages=messages,
-                    temperature=self.temperature,
-                    stream=True,
-                    max_tokens=4000
-                )
+                params = {
+                    "model": self.get_model_identifier(),
+                    "messages": messages,
+                    "stream": True
+                }
+                if self._uses_max_completion_tokens():
+                    params["max_completion_tokens"] = 4000
+                else:
+                    params["temperature"] = self.temperature
+                    params["max_tokens"] = 4000
+
+                response = client.chat.completions.create(**params)
 
                 # 使用累积缓冲区
                 response_buffer = ""
@@ -114,7 +123,7 @@ class OpenAIModel(BaseModel):
             }
 
     def analyze_image(self, image_data: str, proxies: dict = None) -> Generator[dict, None, None]:
-        """Stream GPT-4o's response for image analysis"""
+        """Stream OpenAI model response for image analysis"""
         try:
             # Initial status
             yield {"status": "started", "content": ""}
@@ -165,13 +174,18 @@ class OpenAIModel(BaseModel):
                     }
                 ]
 
-                response = client.chat.completions.create(
-                    model=self.get_model_identifier(),
-                    messages=messages,
-                    temperature=self.temperature,
-                    stream=True,
-                    max_tokens=4000
-                )
+                params = {
+                    "model": self.get_model_identifier(),
+                    "messages": messages,
+                    "stream": True
+                }
+                if self._uses_max_completion_tokens():
+                    params["max_completion_tokens"] = 4000
+                else:
+                    params["temperature"] = self.temperature
+                    params["max_tokens"] = 4000
+
+                response = client.chat.completions.create(**params)
 
                 # 使用累积缓冲区
                 response_buffer = ""

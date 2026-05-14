@@ -128,13 +128,13 @@ def create_model_instance(model_id, settings, is_reasoning=False):
     
     # 确定需要哪个API密钥
     api_key_id = None
-    # 特殊情况：o3-mini使用OpenAI API密钥
-    if model_id.lower() == "o3-mini":
+    # 特殊情况：o系列模型使用OpenAI API密钥
+    if model_id.lower().startswith("o3"):
         api_key_id = "OpenaiApiKey"
     # 其他Anthropic/Claude模型
     elif "claude" in model_id.lower() or "anthropic" in model_id.lower():
         api_key_id = "AnthropicApiKey"
-    elif any(keyword in model_id.lower() for keyword in ["gpt", "openai"]):
+    elif model_id.lower().startswith("o3") or any(keyword in model_id.lower() for keyword in ["gpt", "openai"]):
         api_key_id = "OpenaiApiKey"
     elif "deepseek" in model_id.lower():
         api_key_id = "DeepseekApiKey"
@@ -166,7 +166,7 @@ def create_model_instance(model_id, settings, is_reasoning=False):
         # 根据模型类型选择对应的中转API
         if "claude" in model_id.lower() or "anthropic" in model_id.lower():
             base_url = proxy_api_config.get('apis', {}).get('anthropic', '')
-        elif any(keyword in model_id.lower() for keyword in ["gpt", "openai"]):
+        elif model_id.lower().startswith("o3") or any(keyword in model_id.lower() for keyword in ["gpt", "openai"]):
             base_url = proxy_api_config.get('apis', {}).get('openai', '')
         elif "deepseek" in model_id.lower():
             base_url = proxy_api_config.get('apis', {}).get('deepseek', '')
@@ -174,7 +174,9 @@ def create_model_instance(model_id, settings, is_reasoning=False):
             base_url = proxy_api_config.get('apis', {}).get('alibaba', '')
         elif "gemini" in model_id.lower() or "google" in model_id.lower():
             base_url = proxy_api_config.get('apis', {}).get('google', '')
-    
+        elif "doubao" in model_id.lower():
+            base_url = proxy_api_config.get('apis', {}).get('doubao', '')
+
     # 从前端设置获取自定义API基础URL (apiBaseUrls)
     api_base_urls = settings.get('apiBaseUrls', {})
     if api_base_urls:
@@ -183,7 +185,7 @@ def create_model_instance(model_id, settings, is_reasoning=False):
             custom_base_url = api_base_urls.get('anthropic')
             if custom_base_url:
                 base_url = custom_base_url
-        elif any(keyword in model_id.lower() for keyword in ["gpt", "openai"]):
+        elif model_id.lower().startswith("o3") or any(keyword in model_id.lower() for keyword in ["gpt", "openai"]):
             custom_base_url = api_base_urls.get('openai')
             if custom_base_url:
                 base_url = custom_base_url
@@ -487,7 +489,7 @@ def handle_analyze_text(data):
         print(f"Debug - 最大Token: {max_tokens}, 推理配置: {reasoning_config}")
         
         # 获取模型和API密钥
-        model_id = settings.get('model', 'claude-3-7-sonnet-20250219')
+        model_id = settings.get('model', 'claude-opus-4-7')
         
         if not text:
             socketio.emit('error', {'message': '文本内容不能为空'})
@@ -550,7 +552,7 @@ def handle_analyze_image(data):
         print(f"Debug - 最大Token: {max_tokens}, 推理配置: {reasoning_config}")
         
         # 获取模型和API密钥
-        model_id = settings.get('model', 'claude-3-7-sonnet-20250219')
+        model_id = settings.get('model', 'claude-opus-4-7')
         
         if not image_data:
             socketio.emit('error', {'message': '图像数据不能为空'})

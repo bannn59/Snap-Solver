@@ -1628,7 +1628,7 @@ class SnapSolver {
                     settings: {
                         ...settings,
                         apiKeys: apiKeys,
-                        model: settings.model || 'claude-3-7-sonnet-20250219',
+                        model: settings.model || 'claude-opus-4-7',
                         modelInfo: settings.modelInfo || {},
                         modelCapabilities: {
                             supportsMultimodal: settings.modelInfo?.supportsMultimodal || false,
@@ -1806,7 +1806,7 @@ class SnapSolver {
                 settings: {
                     ...settings,
                     apiKeys: apiKeys,
-                    model: settings.model || 'claude-3-7-sonnet-20250219',
+                    model: settings.model || 'claude-opus-4-7',
                     modelInfo: settings.modelInfo || {},
                     modelCapabilities: {
                         supportsMultimodal: settings.modelInfo?.supportsMultimodal || false,

@@ -6,7 +6,7 @@ from openai import OpenAI
 from .base import BaseModel
 
 class DeepSeekModel(BaseModel):
-    def __init__(self, api_key: str, temperature: float = 0.7, system_prompt: str = None, language: str = None, model_name: str = "deepseek-reasoner", api_base_url: str = None):
+    def __init__(self, api_key: str, temperature: float = 0.7, system_prompt: str = None, language: str = None, model_name: str = "deepseek-v4-pro", api_base_url: str = None):
         super().__init__(api_key, temperature, system_prompt, language)
         self.model_name = model_name
         self.api_base_url = api_base_url  # 存储API基础URL
@@ -21,25 +21,19 @@ class DeepSeekModel(BaseModel):
 
     def get_model_identifier(self) -> str:
         """根据模型名称返回正确的API标识符"""
-        # 通过模型名称来确定实际的API调用标识符
-        if self.model_name == "deepseek-chat":
-            return "deepseek-chat"
-        # 如果是deepseek-reasoner或包含reasoner的模型名称，返回推理模型标识符
-        if "reasoner" in self.model_name.lower():
-            return "deepseek-reasoner"
-        # 对于deepseek-chat也返回对应的模型名称
-        if "chat" in self.model_name.lower() or self.model_name == "deepseek-chat":
-            return "deepseek-chat"
-        
-        # 根据配置中的模型ID来确定实际的模型类型
-        if self.model_name == "deepseek-reasoner":
-            return "deepseek-reasoner"
-        elif self.model_name == "deepseek-chat":
-            return "deepseek-chat"
-            
-        # 默认使用deepseek-chat作为API标识符
-        print(f"未知的DeepSeek模型名称: {self.model_name}，使用deepseek-chat作为默认值")
-        return "deepseek-chat"
+        model_mapping = {
+            "deepseek-v4-pro": "deepseek-v4-pro",
+            "deepseek-v4-flash": "deepseek-v4-flash"
+        }
+        model_id = model_mapping.get(self.model_name)
+        if model_id:
+            return model_id
+
+        if self.model_name and self.model_name.startswith("deepseek-v4"):
+            return self.model_name
+
+        print(f"未知的DeepSeek模型名称: {self.model_name}，使用deepseek-v4-pro作为默认值")
+        return "deepseek-v4-pro"
 
     def analyze_text(self, text: str, proxies: dict = None) -> Generator[dict, None, None]:
         """Stream DeepSeek's response for text analysis"""
@@ -212,13 +206,13 @@ class DeepSeekModel(BaseModel):
         """Stream DeepSeek's response for image analysis"""
         try:
             # 检查我们是否有支持图像的模型
-            if self.model_name == "deepseek-chat" or self.model_name == "deepseek-reasoner":
+            if self.model_name.startswith("deepseek"):
                 yield {
                     "status": "error",
-                    "error": "当前DeepSeek模型不支持图像分析，请使用Anthropic或OpenAI的多模态模型"
+                    "error": "当前DeepSeek模型不支持图像分析，请使用支持多模态的模型"
                 }
                 return
-                
+
             # Initial status
             yield {"status": "started", "content": ""}
 

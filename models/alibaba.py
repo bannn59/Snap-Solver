@@ -6,7 +6,7 @@ from .base import BaseModel
 class AlibabaModel(BaseModel):
     def __init__(self, api_key: str, temperature: float = 0.7, system_prompt: str = None, language: str = None, model_name: str = None, api_base_url: str = None):
         # 如果没有提供模型名称，才使用默认值
-        self.model_name = model_name if model_name else "QVQ-Max-2025-03-25"
+        self.model_name = model_name if model_name else "qwen3-vl-plus"
         print(f"初始化阿里巴巴模型: {self.model_name}")
         # 在super().__init__之前设置model_name，这样get_default_system_prompt能使用它
         super().__init__(api_key, temperature, system_prompt, language)
@@ -15,7 +15,7 @@ class AlibabaModel(BaseModel):
     def get_default_system_prompt(self) -> str:
         """根据模型名称返回不同的默认系统提示词"""
         # 检查是否是通义千问VL模型
-        if self.model_name and "qwen-vl" in self.model_name:
+        if self.model_name and ("qwen-vl" in self.model_name or "qwen3-vl" in self.model_name):
             return """你是通义千问VL视觉语言助手，擅长图像理解、文字识别、内容分析和创作。请根据用户提供的图像：
                 1. 仔细阅读并理解问题
                 2. 分析问题的关键组成部分
@@ -35,8 +35,13 @@ class AlibabaModel(BaseModel):
         """根据模型名称返回对应的模型标识符"""
         # 直接映射模型ID到DashScope API使用的标识符
         model_mapping = {
-            "QVQ-Max-2025-03-25": "qvq-max",
-            "qwen-vl-max-latest": "qwen-vl-max",  # 修正为正确的API标识符
+            "qwen3.6-max-preview": "qwen3.6-max-preview",
+            "qwen3.6-plus": "qwen3.6-plus",
+            "qwen3.6-flash": "qwen3.6-flash",
+            "qwen3-vl-plus": "qwen3-vl-plus",
+            "qwen3-vl-flash": "qwen3-vl-flash",
+            "qwen3-vl-235b-a22b-thinking": "qwen3-vl-235b-a22b-thinking",
+            "qvq-max": "qvq-max",
         }
         
         print(f"模型名称: {self.model_name}")
@@ -48,6 +53,14 @@ class AlibabaModel(BaseModel):
             return model_id
             
         # 如果没有精确匹配，检查是否包含特定前缀
+        if self.model_name and "qwen3.6" in self.model_name.lower():
+            print(f"识别为qwen3.6模型")
+            return self.model_name
+
+        if self.model_name and "qwen3-vl" in self.model_name.lower():
+            print(f"识别为qwen3-vl模型")
+            return self.model_name
+
         if self.model_name and "qwen-vl" in self.model_name.lower():
             if "max" in self.model_name.lower():
                 print(f"识别为qwen-vl-max模型")
@@ -65,13 +78,13 @@ class AlibabaModel(BaseModel):
         if self.model_name and ("qvq" in self.model_name.lower() or "alibaba" in self.model_name.lower()):
             print(f"识别为QVQ模型，使用qvq-max")
             return "qvq-max"
-            
+
         # 最后的默认值
-        print(f"警告：无法识别的模型名称 {self.model_name}，默认使用qvq-max")
-        return "qvq-max"
+        print(f"警告：无法识别的模型名称 {self.model_name}，默认使用qwen3-vl-plus")
+        return "qwen3-vl-plus"
 
     def analyze_text(self, text: str, proxies: dict = None) -> Generator[dict, None, None]:
-        """Stream QVQ-Max's response for text analysis"""
+        """Stream Alibaba model response for text analysis"""
         try:
             # Initial status
             yield {"status": "started", "content": ""}
@@ -315,7 +328,8 @@ class AlibabaModel(BaseModel):
     def _get_max_tokens(self) -> int:
         """根据模型类型返回合适的max_tokens值"""
         # 检查是否为通义千问VL模型
-        if "qwen-vl" in self.get_model_identifier():
+        model_identifier = self.get_model_identifier()
+        if "qwen-vl" in model_identifier:
             return 2000  # 通义千问VL模型最大支持2048，留一些余量
         # QVQ模型或其他模型
         return self.max_tokens if hasattr(self, 'max_tokens') and self.max_tokens else 4000 
